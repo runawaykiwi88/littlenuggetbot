@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NuggetBot - Letter Blaster</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="character-creator.css">
+    <style>
+        /* Hide game until character is chosen */
+        #game-container { display: none; }
+    </style>
+</head>
+<body>
+    <!-- ===== CHARACTER CREATOR SCREEN ===== -->
+    <div id="creator-container">
+        <h1 id="title">NuggetBot</h1>
+        <div id="character-grid">
+            <canvas class="character-option" data-index="0" width="512" height="512"></canvas>
+            <canvas class="character-option" data-index="1" width="512" height="512"></canvas>
+            <canvas class="character-option" data-index="2" width="512" height="512"></canvas>
+            <canvas class="character-option" data-index="3" width="512" height="512"></canvas>
+        </div>
+        <button id="start-button" disabled>&#9654; START GAME</button>
+    </div>
+
+    <!-- ===== GAME SCREEN ===== -->
+    <div id="game-container">
+        <img id="bg-image" src="backgrounds/bg-1.png" alt="Background">
+        <div id="score-bar">
+            <span id="score">Score: 0</span>
+            <span id="progress">◯◯◯◯◯</span>
+        </div>
+        <div id="letter">A</div>
+        <div id="character">
+            <canvas id="character-render" width="200" height="200"></canvas>
+        </div>
+        <canvas id="effects-canvas"></canvas>
+        <img id="grass" src="grass.png" alt="Grass">
+        <div id="celebration"></div>
+    </div>
+
+    <script src="game.js"></script>
+    <script>
+        // ===== CHARACTER CREATOR LOGIC =====
+        const CREATOR_SPRITES = [
+            'characters/body.png',
+            'characters/body-1.png',
+            'characters/body-2.png',
+            'characters/body-3.png'
+        ];
+
+        let selectedIndex = -1;
+        const creatorCanvases = document.querySelectorAll('.character-option');
+        const startButton = document.getElementById('start-button');
+        const creatorContainer = document.getElementById('creator-container');
+        const gameContainer = document.getElementById('game-container');
+
+        async function initCreator() {
+            const loads = CREATOR_SPRITES.map((src, i) => {
+                const img = new Image();
+                img.src = src;
+                return new Promise((resolve, reject) => {
+                    img.onload = () => {
+                        const ctx = creatorCanvases[i].getContext('2d');
+                        ctx.drawImage(img, 0, 0, creatorCanvases[i].width, creatorCanvases[i].height);
+                        resolve();
+                    };
+                    img.onerror = reject;
+                });
+            });
+            await Promise.all(loads);
+
+            // Restore saved selection
+            const saved = localStorage.getItem('playerCharacter');
+            if (saved !== null) selectCharacter(parseInt(saved));
+        }
+
+        function selectCharacter(index) {
+            selectedIndex = index;
+            creatorCanvases.forEach((c, i) => c.classList.toggle('selected', i === index));
+            startButton.disabled = false;
+        }
+
+        creatorCanvases.forEach(canvas => {
+            canvas.addEventListener('click', () => {
+                selectCharacter(parseInt(canvas.dataset.index));
+            });
+        });
+
+        startButton.addEventListener('click', () => {
+            if (selectedIndex < 0) return;
+            localStorage.setItem('playerCharacter', selectedIndex.toString());
+            // Hide creator, show game
+            creatorContainer.style.display = 'none';
+            gameContainer.style.display = 'block';
+            // Start the game
+            init();
+        });
+
+        initCreator();
+    </script>
+</body>
+</html>
