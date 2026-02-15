@@ -22,10 +22,10 @@ const CONFIG = {
 // BACKGROUND IMAGES (cycle after each celebration)
 // ===========================================
 const BG_IMAGES = [
-    'backgrounds/bg-1.png',
-    'backgrounds/bg-3.png',
-    'backgrounds/bg-4.png',
-    'backgrounds/bg-5.png'
+    'bg-1.png',
+    'bg-3.png',
+    'bg-4.png',
+    'bg-5.png'
 ];
 
 // ===========================================
@@ -74,10 +74,10 @@ window.addEventListener('resize', resizeCanvas);
 // CHARACTER SPRITE LOADING
 // ===========================================
 const CHARACTER_SPRITES = [
-    'characters/body.png',
-    'characters/body-1.png',
-    'characters/body-2.png',
-    'characters/body-3.png'
+    'body.png',
+    'body-1.png',
+    'body-2.png',
+    'body-3.png'
 ];
 let playerCharacterIndex = 0;
 
